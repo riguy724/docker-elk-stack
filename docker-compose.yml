@@ -1,0 +1,31 @@
+elasticsearch:
+  container_name: elasticsearch
+  build: elasticsearch/
+  ports:
+    - 19001:9001
+
+kibana:
+  container_name: kibana
+  build: kibana/
+  ports:
+    - 80:80
+    - 29001:9001
+
+  links:
+    - elasticsearch
+
+logstash_client_1:
+  container_name: client_1
+  build: logstash_client/
+  links:
+    - elasticsearch
+  ports:
+    - 39001:9001
+
+logstash_client_2:
+  container_name: client_2
+  build: logstash_client/
+  links:
+    - elasticsearch
+  ports:
+    - 49001:9001
