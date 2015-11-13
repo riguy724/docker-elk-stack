@@ -15,12 +15,6 @@ RUN apt-get update && \
       rm -rf /var/lib/apt/lists/* && \
       rm -rf /var/cache/oracle-jdk8-installer
 
-RUN mkdir -p /etc/pki/tls/certs && \
-      mkdir /etc/pki/tls/private
-
-COPY logstash-forwarder.crt /etc/pki/tls/certs/logstash-forwarder.crt
-COPY logstash-forwarder.key /etc/pki/tls/private/logstash-forwarder.key
 COPY logstash-config/* /etc/logstash/conf.d/
-COPY openssl.cnf /etc/ssl/openssl.cnf
 
 CMD /opt/logstash/bin/logstash agent -f /etc/logstash/conf.d
