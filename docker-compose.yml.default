@@ -1,0 +1,76 @@
+storage:
+  container_name: storage
+  build: docker
+  dockerfile: Dockerfile.data
+
+host:
+  container_name: mysql_db_host
+  build: docker
+  dockerfile: Dockerfile.mysql
+  volumes:
+    - /var/lib/docker/data/host:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_USER: host
+    MYSQL_PASSWORD: secret
+    MYSQL_DATABASE: host
+  ports:
+    - 13306:3306
+  volumes_from:
+    - storage
+
+cad:
+  container_name: mysql_db_cad
+  build: docker
+  dockerfile: Dockerfile.mysql
+  volumes:
+    - /var/lib/docker/data/cad:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_USER: cad
+    MYSQL_PASSWORD: secret
+  ports:
+    - 23306:3306
+  volumes_from:
+    - storage
+
+datashed:
+  container_name: mysql_db_datashed
+  build: docker
+  dockerfile: Dockerfile.mysql
+  volumes:
+    - /var/lib/docker/data/datashed:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_USER: datashed
+    MYSQL_PASSWORD: secret
+  ports:
+    - 33306:3306
+  volumes_from:
+    - storage
+
+redis:
+  container_name: redis
+  build: docker
+  dockerfile: Dockerfile.redis
+  environment:
+    REDIS_USER: redis
+    REDIS_PASSWORD: secret
+  ports:
+    - 16379:6379
+
+web:
+  container_name: nowait-server
+  build: .
+  volumes:
+    - .:/src
+  ports:
+    - 80:80
+  environment:
+    AWS_ACCESS_KEY: dev_aws_access_key
+    AWS_ACCESS_SECRET: dev_aws_access_secret
+  links:
+    - cad
+    - host
+    - datashed
+    - redis

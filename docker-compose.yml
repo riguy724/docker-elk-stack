@@ -1,6 +1,8 @@
 elasticsearch:
   container_name: elasticsearch
   build: elasticsearch/
+  volumes:
+    - /Users/chris/fucknuts:/fuckingfucknuts
 
 logstash:
   container_name: logstash
