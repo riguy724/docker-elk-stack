@@ -1,8 +1,8 @@
 elasticsearch:
   container_name: elasticsearch
   build: elasticsearch/
-  volumes:
-    - /Users/chris/fucknuts:/fuckingfucknuts
+  volumes_from:
+    - elk_storage
 
 logstash:
   container_name: logstash
@@ -18,3 +18,7 @@ kibana:
     - 29001:9001
   links:
     - elasticsearch
+
+elk_storage:
+  container_name: elk_storage
+  build: elk_storage/
