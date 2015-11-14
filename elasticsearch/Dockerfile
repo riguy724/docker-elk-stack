@@ -15,7 +15,12 @@ RUN apt-get update && \
       rm -rf /var/lib/apt/lists/* && \
       rm -rf /var/cache/oracle-jdk8-installer
 
-COPY elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 COPY supervisord.conf /etc/supervisord.conf
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-CMD supervisord -c /etc/supervisord.conf
+COPY lib /data
+COPY log /data
+COPY etc /data
+
+ENTRYPOINT ["/entrypoint.sh"]
