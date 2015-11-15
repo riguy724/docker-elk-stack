@@ -16,6 +16,8 @@ logstash:
   build: logstash/
   links:
     - elasticsearch
+  external_links:
+    - redis
 
 kibana:
   container_name: kibana
