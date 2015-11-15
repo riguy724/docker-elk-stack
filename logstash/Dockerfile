@@ -5,7 +5,7 @@ MAINTAINER Christopher Riley "riguy724@gmail.com"
 WORKDIR /setup
 
 RUN apt-get update && \
-      apt-get install -y vim wget curl software-properties-common python-software-properties && \
+      apt-get install -y tree vim wget curl software-properties-common python-software-properties && \
       echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
       add-apt-repository -y ppa:webupd8team/java && \
       wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && \

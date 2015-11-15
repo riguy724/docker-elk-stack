@@ -1,6 +1,13 @@
+elk_storage:
+  container_name: elk_storage
+  build: elk_storage/
+
 elasticsearch:
   container_name: elasticsearch
   build: elasticsearch/
+  volumes:
+    - /var/lib/docker/data/elasticsearch/var/log/elasticsearch:/var/log/elasticsearch
+    - /var/lib/docker/data/elasticsearch/var/lib/elasticsearch:/var/lib/elasticsearch
   volumes_from:
     - elk_storage
 
@@ -18,7 +25,3 @@ kibana:
     - 29001:9001
   links:
     - elasticsearch
-
-elk_storage:
-  container_name: elk_storage
-  build: elk_storage/

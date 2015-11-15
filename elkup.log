@@ -1,0 +1,121 @@
+Building elk_storage
+Step 1 : FROM ubuntu:14.04.3
+ ---> e9ae3c220b23
+Step 2 : RUN mkdir -p /var/lib/docker/data/elasticsearch/var/log/elasticsearch
+ ---> Running in af8adcb3fafc
+ ---> 834ac00f69c6
+Removing intermediate container af8adcb3fafc
+Step 3 : RUN mkdir -p /var/lib/docker/data/elasticsearch/var/lib/elasticsearch
+ ---> Running in 72c0b0b1e003
+ ---> 593ccc769e4e
+Removing intermediate container 72c0b0b1e003
+Step 4 : VOLUME /var/lib/docker/data/elasticsearch/var/log/elasticsearch
+ ---> Running in ffc479dbd628
+ ---> d95cb3d88291
+Removing intermediate container ffc479dbd628
+Step 5 : VOLUME /var/lib/docker/data/elasticsearch/var/lib/elasticsearch
+ ---> Running in 39bb10334792
+ ---> 524c37a60d34
+Removing intermediate container 39bb10334792
+Step 6 : CMD true
+ ---> Running in 0289ea7a9847
+ ---> abdee440dbfc
+Removing intermediate container 0289ea7a9847
+Successfully built abdee440dbfc
+Building elasticsearch
+Step 1 : FROM ubuntu:14.04.3
+ ---> e9ae3c220b23
+Step 2 : MAINTAINER Christopher Riley "riguy724@gmail.com"
+ ---> Using cache
+ ---> 43dfda0fe81f
+Step 3 : WORKDIR /setup
+ ---> Using cache
+ ---> 3ee30bcfe464
+Step 4 : RUN apt-get update &&       apt-get install -y tree supervisor vim wget curl software-properties-common python-software-properties &&       echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections &&       add-apt-repository -y ppa:webupd8team/java &&       wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - &&       echo "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main" | tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list &&       apt-get update &&       apt-get -y install oracle-java8-installer elasticsearch &&       rm -rf /var/lib/apt/lists/* &&       rm -rf /var/cache/oracle-jdk8-installer
+ ---> Using cache
+ ---> de4cc3232369
+Step 5 : COPY supervisord.conf /etc/supervisord.conf
+ ---> Using cache
+ ---> ac071e7adcbe
+Step 6 : COPY etc/* /etc/elasticsearch/
+ ---> Using cache
+ ---> 1b3faeed7376
+Step 7 : COPY entrypoint.sh /entrypoint.sh
+ ---> Using cache
+ ---> ef94e949abdd
+Step 8 : RUN chmod +x /entrypoint.sh
+ ---> Using cache
+ ---> e4a3635398c4
+Step 9 : ENTRYPOINT /entrypoint.sh
+ ---> Using cache
+ ---> 08f88bfb981c
+Successfully built 08f88bfb981c
+Building logstash
+Step 1 : FROM ubuntu:14.04.3
+ ---> e9ae3c220b23
+Step 2 : MAINTAINER Christopher Riley "riguy724@gmail.com"
+ ---> Using cache
+ ---> 43dfda0fe81f
+Step 3 : WORKDIR /setup
+ ---> Using cache
+ ---> 3ee30bcfe464
+Step 4 : RUN apt-get update &&       apt-get install -y tree vim wget curl software-properties-common python-software-properties &&       echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections &&       add-apt-repository -y ppa:webupd8team/java &&       wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - &&       echo 'deb http://packages.elasticsearch.org/logstash/2.0/debian stable main' | tee /etc/apt/sources.list.d/logstash.list &&       apt-get update &&       apt-get -y install oracle-java8-installer logstash &&       rm -rf /var/lib/apt/lists/* &&       rm -rf /var/cache/oracle-jdk8-installer
+ ---> Using cache
+ ---> 6a09661b75dd
+Step 5 : COPY logstash-config/* /etc/logstash/conf.d/
+ ---> Using cache
+ ---> 277fff204055
+Step 6 : CMD /opt/logstash/bin/logstash agent -f /etc/logstash/conf.d
+ ---> Using cache
+ ---> bc8f4cf409f7
+Successfully built bc8f4cf409f7
+Building kibana
+Step 1 : FROM ubuntu:14.04.3
+ ---> e9ae3c220b23
+Step 2 : MAINTAINER Christopher Riley "riguy724@gmail.com"
+ ---> Using cache
+ ---> 43dfda0fe81f
+Step 3 : WORKDIR /setup
+ ---> Using cache
+ ---> 3ee30bcfe464
+Step 4 : RUN apt-get update &&       apt-get install -y tree supervisor vim wget curl nginx apache2-utils
+ ---> Using cache
+ ---> dca150f0a940
+Step 5 : COPY nginx-default /etc/nginx/sites-available/default
+ ---> Using cache
+ ---> 6a1dc6449fc3
+Step 6 : RUN groupadd -g 199 kibana &&       useradd -u 199 -g 199 kibana
+ ---> Using cache
+ ---> 86de859796a4
+Step 7 : RUN curl https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz | tar xz &&       mkdir -p /opt/kibana &&       cp -R kibana-4*/* /opt/kibana &&       rm -r kibana-4*
+ ---> Using cache
+ ---> 5e6db2467949
+Step 8 : COPY kibana.yml /opt/kibana/config/kibana.yml
+ ---> Using cache
+ ---> 6afe29fc1ef1
+Step 9 : RUN chown -R kibana: /opt/kibana
+ ---> Using cache
+ ---> c528f9986f32
+Step 10 : RUN curl -o /etc/init.d/kibana       https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/fc5025c3fc499ad8262aff34ba7fde8c87ead7c0/kibana-4.x-init
+ ---> Using cache
+ ---> ade1667c8bc0
+Step 11 : RUN curl -o /etc/default/kibana       https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/fc5025c3fc499ad8262aff34ba7fde8c87ead7c0/kibana-4.x-default
+ ---> Using cache
+ ---> 3b320e2023cb
+Step 12 : RUN htpasswd -bc /etc/nginx/htpasswd.users kibanaadmin kibana
+ ---> Using cache
+ ---> 86c42e5c80df
+Step 13 : RUN chmod +x /etc/init.d/kibana &&       update-rc.d kibana defaults 96 9
+ ---> Using cache
+ ---> e5e79ff23092
+Step 14 : COPY supervisord.conf /etc/supervisord.conf
+ ---> Using cache
+ ---> 73926044a8c9
+Step 15 : CMD supervisord -c /etc/supervisord.conf
+ ---> Using cache
+ ---> 8d34f5ae50a4
+Successfully built 8d34f5ae50a4
+Creating elk_storage
+Creating elasticsearch
+Creating logstash
+Creating kibana
