@@ -16,8 +16,7 @@ logstash:
   build: logstash/
   links:
     - elasticsearch
-  external_links:
-    - redis
+    - elk_redis
 
 kibana:
   container_name: kibana
@@ -27,3 +26,10 @@ kibana:
     - 29001:9001
   links:
     - elasticsearch
+
+elk_redis:
+  container_name: elk_redis
+  build: elk_redis/
+  environment:
+    REDIS_USER: redis
+    REDIS_PASSWORD: secret
