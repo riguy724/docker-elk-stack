@@ -5,7 +5,7 @@ MAINTAINER Christopher Riley "riguy724@gmail.com"
 WORKDIR /setup
 
 RUN apt-get update && \
-      apt-get install -y supervisor vim wget curl nginx apache2-utils
+      apt-get install -y tree supervisor vim wget curl nginx apache2-utils
 
 COPY nginx-default /etc/nginx/sites-available/default
 
